@@ -20,10 +20,10 @@ b. PHP library to connect to SQL table
 c. mentee and mentor already in Moodle
 d. role already in Moodle
 
-1. Download all the files in the directory {MOODLE_DIR}/enrol/dbuserrel (using git, GitHub website, or anything else)
+1. Download all the files in the directory {MOODLE_DIR}/enrol/mentor (using git, GitHub website, or anything else)
 2. Go to http://{MOODLE_URL}/admin to complete the installation
-3. Fill all parameters using Moodle plugin administration interface (http://{MOODLE_URL}/admin/settings.php?section=enrolsettingsdbuserrel
-4. Setup a cron job to execute {MOODLE_DIR}/enrol/dbuserrel/cli/sync.php (add -v for more output, and redirecte output to log file)
+3. Fill all parameters using Moodle plugin administration interface (http://{MOODLE_URL}/admin/settings.php?section=enrolsettingsmentor
+4. Setup a cron job to execute {MOODLE_DIR}/enrol/mentor/cli/sync.php (add -v for more output, and redirecte output to log file)
 
 Feel free to send me any comments/suggestions
 

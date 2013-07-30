@@ -1,19 +1,19 @@
 <?php  // $Id$
 /**
- * User role assignment plugin.
+ * Easily (mass) enrol mentors
  *
  * This plugin synchronises user roles with external database table.
  *
  * @package    enrol
- * @subpackage dbuserrel
- * @copyright  Penny Leach <penny@catalyst.net.nz>
- * @copyright  Maxime Pelletier <maxime.pelletier@educsa.org>
+ * @subpackage mentors
+ * @copyright  Virgil Ashruf <v.ashruf@avetica.nl>
+ * @copyright  Maxime Pelletier <maxime.pelletier@educsa.org> Greatly inspired!
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-class enrol_dbuserrel_plugin extends enrol_plugin {
+class enrol_mentor_plugin extends enrol_plugin {
 
     var $log;
 
@@ -24,7 +24,7 @@ class enrol_dbuserrel_plugin extends enrol_plugin {
      * @return bool
      */
     public function instance_deleteable($instance) {
-        if (!enrol_is_enabled('dbuserrel')) {
+        if (!enrol_is_enabled('mentor')) {
             return true;
         }
         if (!$this->get_config('dbtype') or !$this->get_config('dbhost') or !$this->get_config('remoteenroltable') or !$this->get_config('remotecoursefield') or !$this->get_config('remoteuserfield')) {
@@ -72,7 +72,7 @@ function setup_enrolments($verbose = false, &$user=null) {
     }
     $extdb = $this->db_init();
     if (!$extdb) {
-        error_log('Error: [ENROL_DBUSERREL] Could not make a connection');
+        error_log('Error: [ENROL_mentor] Could not make a connection');
         return;
     }
 
@@ -124,7 +124,7 @@ function setup_enrolments($verbose = false, &$user=null) {
             JOIN {context} c ON c.id = ra.contextid
             JOIN {user} u1 ON ra.userid = u1.id
             JOIN {user} u2 ON c.instanceid = u2.id
-            WHERE ra.component = 'enrol_dbuserrel' 
+            WHERE ra.component = 'enrol_mentor' 
 			AND c.contextlevel = " . CONTEXT_USER;
             //(!empty($user) ?  " AND c.instanceid = {$user->id} OR ra.userid = {$user->id}" : '');
 
@@ -135,7 +135,7 @@ function setup_enrolments($verbose = false, &$user=null) {
         }
 
         if ($verbose) {
-	    mtrace(sizeof($existing)." role assignement entries from dbuserrel found in Moodle DB");
+	    mtrace(sizeof($existing)." role assignement entries from mentor found in Moodle DB");
         }
 
 	// Is there something in the remote table?
@@ -212,23 +212,23 @@ function setup_enrolments($verbose = false, &$user=null) {
                 $context = get_context_instance(CONTEXT_USER, $objectusers[$row[$fremoteobject]]);
                 mtrace("Information: [" . $row[$fremotesubject] . "] assigning " . $row[$fremoterole] . " to " . $row[$fremotesubject]
                    . " on " . $row[$fremoteobject]);
-                // MOODLE 1.X => role_assign($roles[$row->{$fremoterole}]->id, $subjectusers[$row->{$fremotesubject}], 0, $context->id, 0, 0, 0, 'dbuserrel');
+                // MOODLE 1.X => role_assign($roles[$row->{$fremoterole}]->id, $subjectusers[$row->{$fremotesubject}], 0, $context->id, 0, 0, 0, 'mentor');
 		// MOODLE 2.X => role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0, $timemodified = '') 
-		role_assign($roles[$row[$fremoterole]]->id, $subjectusers[$row[$fremotesubject]], $context->id, 'enrol_dbuserrel', 0, '');
+		role_assign($roles[$row[$fremoterole]]->id, $subjectusers[$row[$fremotesubject]], $context->id, 'enrol_mentor', 0, '');
 
             }
 
 	    mtrace("Deleting old role assignations");
             // delete everything left in existing
             foreach ($existing as $key => $assignment) {
-                if ($assignment->component == 'enrol_dbuserrel') {
+                if ($assignment->component == 'enrol_mentor') {
                     mtrace("Information: [$key] unassigning $key");
                     // MOODLE 1.X => role_unassign($assignment->roleid, $assignment->userid, 0, $assignment->contextid);
-	  	    role_unassign($assignment->roleid, $assignment->userid, $assignment->contextid, 'enrol_dbuserrel', 0);
+	  	    role_unassign($assignment->roleid, $assignment->userid, $assignment->contextid, 'enrol_mentor', 0);
                 }
             }
         } else {
-            error_log('Warning: [ENROL_DBUSERREL] Couldn\'t get rows from external db: '.$extdb->ErrorMsg(). ' -- no relationships to assign');
+            error_log('Warning: [ENROL_mentor] Couldn\'t get rows from external db: '.$extdb->ErrorMsg(). ' -- no relationships to assign');
         }
     }
     $this->enrol_disconnect($extdb);
